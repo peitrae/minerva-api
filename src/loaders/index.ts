@@ -1,8 +1,18 @@
+import injectDependencies from './dependencies/dependencies';
 import loadExpress from './express/express';
-import { InitLoadersParams } from './index.types';
 
-const initLoaders = ({ expressApp }: InitLoadersParams) => {
-	loadExpress(expressApp);
+const initLoaders = () => {
+	/**
+	 * Inject all metadata dependencies
+	 */
+	injectDependencies();
+
+	/**
+	 * Load express
+	 */
+	const expressApp = loadExpress();
+
+	return { expressApp };
 };
 
 export default initLoaders;

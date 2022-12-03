@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express from 'express';
 
 import config from '@/config';
 import routes from '@/api';
@@ -6,7 +6,8 @@ import routes from '@/api';
 /**
  * Load configured express application
  */
-const loadExpress = (app: Application) => {
+const loadExpress = () => {
+	const app = express();
 	/**
 	 * Healt check endpoint
 	 */
@@ -23,6 +24,8 @@ const loadExpress = (app: Application) => {
 	 * Load API routes
 	 */
 	app.use(config.api.prefix, routes);
+
+	return app;
 };
 
 export default loadExpress;

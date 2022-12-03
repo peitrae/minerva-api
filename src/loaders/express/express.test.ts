@@ -1,5 +1,3 @@
-import express from 'express';
-
 import loadExpress from './express';
 import config from '@/config';
 import routes from '@/api';
@@ -24,11 +22,9 @@ describe('loaders/express', () => {
 	});
 
 	it('should configure express application', () => {
-		const mockApp = express();
+		const app = loadExpress();
 
-		loadExpress(mockApp);
-
-		expect(mockApp.get).toHaveBeenCalledWith('/status', expect.any(Function));
-		expect(mockApp.use).toHaveBeenCalledWith(config.api.prefix, mockRoutes);
+		expect(app.get).toHaveBeenCalledWith('/status', expect.any(Function));
+		expect(app.use).toHaveBeenCalledWith(config.api.prefix, mockRoutes);
 	});
 });

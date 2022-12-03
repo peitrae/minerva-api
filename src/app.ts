@@ -1,4 +1,3 @@
-import express from 'express';
 import * as http from 'http';
 import 'module-alias/register';
 import 'reflect-metadata';
@@ -8,19 +7,22 @@ import initLoaders from './loaders';
 
 const startServer = () => {
 	/**
-	 * Initialize server
-	 */
-	const app = express();
-	const server = http.createServer(app);
-
-	/**
 	 * Initialize all loaders
 	 */
-	initLoaders({ expressApp: app });
+	const { expressApp } = initLoaders();
+
+	/**
+	 * Initialize server
+	 */
+	const server = http.createServer(expressApp);
 
 	server.listen(config.port, () => {
 		console.log(`Server listening on port: ${config.port}`);
 	});
+
+	return { expressApp, server };
 };
 
-startServer();
+const { expressApp, server } = startServer();
+
+export { expressApp, server };
