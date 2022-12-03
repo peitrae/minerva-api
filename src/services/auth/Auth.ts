@@ -1,22 +1,44 @@
-import { Service } from 'typedi';
+import { Inject, Service } from 'typedi';
 
-import { Credentials } from './Auth.types';
+import config from '@/config';
+import { AppJWTPayload, Credentials } from './Auth.types';
+import { SpotifyService } from '..';
+import { JwtObject } from 'index';
 
 @Service()
 class AuthService {
-	constructor() {}
+	constructor(
+		@Inject('SpotifyService') private spotify: SpotifyService,
+		@Inject('jwt') private jwt: JwtObject
+	) {}
 
-	login(code: string) {
-		/**
-		 * @TODO Change the mock method to be the actual method
-		 */
+	public async login(code: string): Promise<Credentials> {
+		const authDTO = await this.spotify.requestAuthorization(code);
+		const { accessToken, refreshToken, expiresIn } = authDTO;
 
-		return new Promise<Credentials>((resolve) => {
-			resolve({
-				idToken: 'mockIdToken',
-				refreshToken: 'mockRefreshToken',
-				expiresIn: 3600,
-			});
+		const idToken = this.generateIdToken({
+			iss: config.baseURL,
+			sub: accessToken,
+			aud: config.clientURL,
+			exp: expiresIn,
+			iat: new Date().getTime(),
+		});
+
+		return {
+			idToken,
+			refreshToken,
+			expiresIn,
+		};
+	}
+
+	/**
+	 * Return JWT of idToken.
+	 */
+	private generateIdToken(payload: AppJWTPayload) {
+		const { privateKey, algorithm } = config.jwt;
+
+		return this.jwt.sign(payload, privateKey, {
+			algorithm,
 		});
 	}
 }

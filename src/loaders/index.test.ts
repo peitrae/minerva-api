@@ -1,8 +1,8 @@
-import { Application } from 'express';
-
 import initLoaders from '.';
+import injectDependencies from './dependencies/dependencies';
 import loadExpress from './express/express';
 
+jest.mock('./dependencies/dependencies');
 jest.mock('./express/express', () => jest.fn());
 
 describe('initLoaders', () => {
@@ -10,11 +10,14 @@ describe('initLoaders', () => {
 		typeof loadExpress
 	>;
 
+	const mockInjectDependencies = injectDependencies as jest.MockedFunction<
+		typeof injectDependencies
+	>;
+
 	it('should initialize all loaders', () => {
-		const mockExpressApp = {} as Application;
+		initLoaders();
 
-		initLoaders({ expressApp: mockExpressApp });
-
-		expect(mockLoadExpress).toHaveBeenCalledWith(mockExpressApp);
+		expect(mockInjectDependencies).toHaveBeenCalled();
+		expect(mockLoadExpress).toHaveBeenCalled();
 	});
 });

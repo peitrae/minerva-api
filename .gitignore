@@ -2,3 +2,5 @@
 /coverage
 
 /.env
+/private.key
+/public.key

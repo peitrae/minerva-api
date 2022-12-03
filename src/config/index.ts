@@ -1,7 +1,14 @@
+import fs from 'fs';
+import path from 'path';
 import dotenv from 'dotenv';
 import { Algorithm } from 'jsonwebtoken';
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+const privateKeyPath = path.resolve(__dirname, '../../private.key');
+const publicKeyPath = path.resolve(__dirname, '../../public.key');
+const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
+const publicKey = fs.readFileSync(publicKeyPath, 'utf8');
 
 const envFound = dotenv.config();
 
@@ -28,8 +35,12 @@ export default {
 	 */
 	clientURL: process.env.BASE_URL || 'http://localhost:3000',
 	jwt: {
-		secret: process.env.JWT_SECRET as string,
-		algorithm: (process.env.JWT_SECRET as unknown as Algorithm) || 'HS256', // TODO: Explain why using HS256
+		privateKey,
+		publicKey,
+		/**
+		 * RS256 ensures non-repudiation and can be roatated re-deploying your application with a new secret.
+		 */
+		algorithm: (process.env.JWT_ALGORITHM as unknown as Algorithm) || 'RS256',
 	},
 	/**
 	 * API config
