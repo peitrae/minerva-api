@@ -1,6 +1,7 @@
 import express from 'express';
 import * as http from 'http';
 import 'module-alias/register';
+import 'reflect-metadata';
 
 import config from './config';
 import initLoaders from './loaders';

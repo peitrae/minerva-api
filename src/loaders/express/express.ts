@@ -1,4 +1,4 @@
-import { Application } from 'express';
+import express, { Application } from 'express';
 
 import config from '@/config';
 import routes from '@/api';
@@ -15,9 +15,14 @@ const loadExpress = (app: Application) => {
 	});
 
 	/**
+	 * Transforms the raw string of req.body into json
+	 */
+	app.use(express.json());
+
+	/**
 	 * Load API routes
 	 */
-	app.use(config.api.prefix, routes());
+	app.use(config.api.prefix, routes);
 };
 
 export default loadExpress;

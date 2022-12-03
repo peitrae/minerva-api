@@ -3,7 +3,7 @@ import { Application } from 'express';
 import initLoaders from '.';
 import loadExpress from './express/express';
 
-jest.mock('./express/express');
+jest.mock('./express/express', () => jest.fn());
 
 describe('initLoaders', () => {
 	const mockLoadExpress = loadExpress as jest.MockedFunction<

@@ -1,11 +1,12 @@
 import { Router } from 'express';
 
-export default () => {
-	const app = Router();
+import auth from './routes/auth/auth';
 
-  /**
-   * TODO: Add auth/login route
-   */
+const root = Router();
 
-	return app;
-};
+/**
+ * List of all routes
+ */
+root.use('/v1/auth', auth);
+
+export default root;
