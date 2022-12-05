@@ -1,26 +1,19 @@
 import { AppError } from '..';
 
 describe('utils/AppError', () => {
-	it('should return default modified Error object', () => {
-		const error = new AppError('Internal server error');
-
-		expect(error).toMatchObject({
-			message: 'Internal server error',
-			code: 500,
+	it('should returns adjusted error object', () => {
+		const error = new AppError({
+			status: 500,
 			name: 'INTERNAL_SERVER_ERROR',
-		});
-	});
-
-	it('should return code and name based on option params', () => {
-		const error = new AppError('Unauthorized', {
-			code: 400,
-			name: 'UNAUTHORIZED',
+			message: 'Internal Server Error',
 		});
 
 		expect(error).toMatchObject({
-			message: 'Unauthorized',
-			code: 400,
-			name: 'UNAUTHORIZED',
+			errors: {
+				status: 500,
+				name: 'INTERNAL_SERVER_ERROR',
+				message: 'Internal Server Error',
+			},
 		});
 	});
 });

@@ -1,14 +1,21 @@
-class AppError extends Error {
-	public name: string;
-	public code?: number;
+import { constantCase } from 'constant-case';
 
-	constructor(message: string, options: Partial<AppError> = {}) {
+import { Errors } from './AppError.types';
+
+/**
+ * Error objects template that (most commonly) will be used to sent to the client.
+ */
+class AppError extends Error {
+	public errors: Errors;
+
+	constructor({ message, name, status }: any) {
 		super(message);
 
-		const { name, code } = options;
-
-		this.name = name || 'INTERNAL_SERVER_ERROR';
-		this.code = code || 500;
+		this.errors = {
+			status: status || 500,
+			name: name ? constantCase(name) : 'INTERNAL_SERVER_ERROR',
+			message,
+		};
 
 		Error.captureStackTrace(this);
 	}

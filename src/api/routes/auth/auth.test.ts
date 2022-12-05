@@ -48,10 +48,12 @@ describe('routes/auth', () => {
 				.post(`/api/v1/auth/login`)
 				.expect(400);
 
-			expect(res.body).toEqual({
-				code: 400,
-				message: 'Authorization code is not exist',
-				name: 'CODE_IS_EMPTY',
+			expect(res.body).toMatchObject({
+				errors: {
+					status: 400,
+					message: 'Authorization code is not exists',
+					name: 'AUTHORIZATION_CODE_IS_EMPTY',
+				},
 			});
 		});
 	});

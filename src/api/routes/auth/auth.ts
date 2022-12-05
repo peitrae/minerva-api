@@ -10,14 +10,15 @@ const router = Router();
 /**
  * Login route to request Spotify user authorization.
  */
-router.post('/login', async (req: LoginRequest, res) => {
+router.post('/login', async (req: LoginRequest, res, next) => {
 	const spotifyAuthCode = req.body.code;
 
 	try {
 		if (!spotifyAuthCode) {
-			throw new AppError('Authorization code is not exist', {
-				code: 400,
-				name: 'CODE_IS_EMPTY',
+			throw new AppError({
+				status: 400,
+				name: 'AUTHORIZATION_CODE_IS_EMPTY',
+				message: 'Authorization code is not exists',
 			});
 		}
 
@@ -32,7 +33,7 @@ router.post('/login', async (req: LoginRequest, res) => {
 			expiresIn,
 		});
 	} catch (err) {
-		res.status(err.code).json({ ...err, message: err.message });
+		next(err);
 	}
 });
 

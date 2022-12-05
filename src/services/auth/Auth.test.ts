@@ -32,7 +32,7 @@ describe('services/Auth', () => {
 			};
 			mockSpotifyService = {
 				requestAuthorization: jest.fn().mockResolvedValue(mockAuthDTO),
-			};
+			} as unknown as SpotifyService;
 			const mockGenerateIdToken = jest.spyOn(
 				AuthService.prototype as any,
 				'generateIdToken'
