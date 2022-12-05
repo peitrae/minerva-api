@@ -1,6 +1,6 @@
 import { constantCase } from 'constant-case';
 
-import { Errors } from './AppError.types';
+import { ErrorConstructorParams, Errors } from './AppError.types';
 
 /**
  * Error objects template that (most commonly) will be used to sent to the client.
@@ -8,7 +8,7 @@ import { Errors } from './AppError.types';
 class AppError extends Error {
 	public errors: Errors;
 
-	constructor({ message, name, status }: any) {
+	constructor({ message, name, status }: ErrorConstructorParams) {
 		super(message);
 
 		this.errors = {
