@@ -48,4 +48,13 @@ export default {
 	api: {
 		prefix: '/api',
 	},
+	/**
+	 * Spotify Web API config
+	 */
+	spotify: {
+		baseURL: 'https://accounts.spotify.com/api',
+		clientId: process.env.SPOTIFY_CLIENT_ID as string,
+		clientSecret: process.env.SPOTIFY_CLIENT_SECRET as string,
+		redirectURI: process.env.SPOTIFY_REDIRECT_URI as string,
+	},
 };

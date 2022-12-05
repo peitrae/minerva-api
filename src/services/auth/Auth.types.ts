@@ -8,11 +8,11 @@ export interface Credentials {
 	/**
 	 * Spotify refresh token that can be used to generate a new Spotify access token.
 	 */
-	refreshToken: AuthorizationGranted['refreshToken'];
+	refreshToken: AuthorizationGranted['refresh_token'];
 	/**
 	 * The time period (in miliseconds) for which the Spotify access token is valid.
 	 */
-	expiresIn: AuthorizationGranted['expiresIn'];
+	expiresIn: AuthorizationGranted['expires_in'];
 }
 
 /**
