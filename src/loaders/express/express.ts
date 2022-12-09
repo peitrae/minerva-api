@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 
 import config from '@/config';
 import routes from '@/api';
@@ -57,8 +57,7 @@ export const handleExpressError = (
 /**
  * Load configured express application
  */
-const loadExpress = () => {
-	const app = express();
+const loadExpress = (app: Application) => {
 	/**
 	 * Healt check endpoint
 	 */

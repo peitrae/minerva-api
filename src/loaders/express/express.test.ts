@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Application, NextFunction, Request, Response } from 'express';
 import loadExpress, { handleExpressError } from './express';
 import config from '@/config';
 import routes from '@/api';
@@ -92,13 +92,17 @@ describe('loaders/express', () => {
 
 	describe('loadExpress', () => {
 		const mockRoutes = routes as jest.MockedFunction<typeof routes>;
+		const mockApp = {
+			get: jest.fn(),
+			use: jest.fn(),
+		} as unknown as Application;
 
 		it('should configure express application', () => {
-			const app = loadExpress();
+			loadExpress(mockApp);
 
-			expect(app.get).toHaveBeenCalledWith('/status', expect.any(Function));
-			expect(app.use).toHaveBeenCalledWith(config.api.prefix, mockRoutes);
-      expect(app.use).toHaveBeenCalledWith(handleExpressError);
+			expect(mockApp.get).toHaveBeenCalledWith('/status', expect.any(Function));
+			expect(mockApp.use).toHaveBeenCalledWith(config.api.prefix, mockRoutes);
+			expect(mockApp.use).toHaveBeenCalledWith(handleExpressError);
 		});
 	});
 });

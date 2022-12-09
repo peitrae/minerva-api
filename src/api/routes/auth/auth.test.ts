@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { AuthService } from '@/services';
 import { generateRandomString } from '@/utils';
-import { expressApp, server } from '@/app';
+import { app, server } from '@/app';
 import Container from 'typedi';
 
 jest.mock('@/services/auth/Auth');
@@ -24,7 +24,7 @@ describe('routes/auth', () => {
 			mockAuthService.login = jest.fn().mockResolvedValue(mockLoginResult);
 			Container.set(AuthService, mockAuthService);
 
-			const res = await request(expressApp)
+			const res = await request(app)
 				.post(`/api/v1/auth/login`)
 				.send({
 					code: generateRandomString(20),
@@ -35,7 +35,7 @@ describe('routes/auth', () => {
 		});
 
 		it('should "Authorization code is not exist" message and status of 400 if code is not exist', async () => {
-			const res = await request(expressApp)
+			const res = await request(app)
 				.post(`/api/v1/auth/login`)
 				.expect(400);
 
