@@ -1,23 +1,29 @@
 import initLoaders from '.';
 import injectDependencies from './dependencies/dependencies';
 import loadExpress from './express/express';
+import loadSocketIO from './socketio/socketio';
+import { InitLoadersParams } from './index.types';
 
+const mockHttpServer = jest.fn();
+
+jest.mock('http', () => ({
+	createServer: jest.fn(() => mockHttpServer),
+}));
 jest.mock('./dependencies/dependencies');
 jest.mock('./express/express', () => jest.fn());
+jest.mock('./socketio/socketio');
 
 describe('initLoaders', () => {
-	const mockLoadExpress = loadExpress as jest.MockedFunction<
-		typeof loadExpress
-	>;
-
-	const mockInjectDependencies = injectDependencies as jest.MockedFunction<
-		typeof injectDependencies
-	>;
+	const mockParams = {
+		app: jest.fn(),
+		io: jest.fn(),
+	} as unknown as InitLoadersParams;
 
 	it('should initialize all loaders', () => {
-		initLoaders();
+		initLoaders(mockParams);
 
-		expect(mockInjectDependencies).toHaveBeenCalled();
-		expect(mockLoadExpress).toHaveBeenCalled();
+		expect(injectDependencies).toHaveBeenCalled();
+		expect(loadExpress).toHaveBeenCalledWith(mockParams.app);
+		expect(loadSocketIO).toHaveBeenCalledWith(mockParams.io);
 	});
 });

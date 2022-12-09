@@ -1,7 +1,10 @@
 import injectDependencies from './dependencies/dependencies';
 import loadExpress from './express/express';
+import { InitLoadersParams } from './index.types';
+import loadSocketIO from './socketio/socketio';
 
-const initLoaders = () => {
+
+const initLoaders = ({ app, io }: InitLoadersParams) => {
 	/**
 	 * Inject all metadata dependencies
 	 */
@@ -10,9 +13,12 @@ const initLoaders = () => {
 	/**
 	 * Load express
 	 */
-	const expressApp = loadExpress();
+	loadExpress(app);
 
-	return { expressApp };
+	/**
+	 * Load Socket IO
+	 */
+	loadSocketIO(io);
 };
 
 export default initLoaders;

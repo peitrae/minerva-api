@@ -4,6 +4,7 @@ import config from '@/config';
 import { AppJWTPayload, Credentials } from './Auth.types';
 import { SpotifyService } from '..';
 import { JwtObject } from 'index';
+import { generateRandomString } from '@/utils';
 
 @Service()
 class AuthService {
@@ -29,6 +30,16 @@ class AuthService {
 			refreshToken,
 			expiresIn,
 		};
+	}
+
+	public verifyIdToken(idToken: string) {
+    /**
+     * @TODO Change to actual method
+     */
+
+		const accessToken = generateRandomString(20);
+
+		return { accessToken };
 	}
 
 	/**
