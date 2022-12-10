@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import config from '@/config';
-import { generateRandomString } from '@/utils';
+import { AppError, generateRandomString } from '@/utils';
 import { JwtObject } from 'index';
 import { AuthService, SpotifyService } from '..';
 
@@ -49,10 +49,92 @@ describe('services/Auth', () => {
 				iss: config.baseURL,
 				sub: mockAuthDTO.accessToken,
 				aud: config.clientURL,
-				exp: mockAuthDTO.expiresIn,
+				exp: expect.any(Number),
 				iat: expect.any(Number),
 			});
 			expect(res).toEqual(mockCredentials);
+		});
+	});
+
+	describe('verifyIdToken', () => {
+		it('should return accessToken if idToken is valid', () => {
+			const mockAccessToken = generateRandomString(32);
+			mockJwt = {
+				...jest.requireActual('jsonwebtoken'),
+				verify: jest.fn().mockReturnValue({
+					accessToken: mockAccessToken,
+				}),
+			};
+
+			const mockIdToken = generateRandomString(48);
+
+			const auth = new AuthService(mockSpotifyService, mockJwt);
+			const { accessToken } = auth.verifyIdToken(mockIdToken);
+
+			expect(accessToken).toEqual(accessToken);
+		});
+
+		it('should throw "TOKEN_IS_EXPIRED" error if idToken is expired', () => {
+			const mockIdToken = generateRandomString(48);
+			mockJwt = {
+				...jest.requireActual('jsonwebtoken'),
+				verify: jest.fn(() => {
+					throw {
+						name: 'TokenExpiredError',
+					};
+				}),
+			};
+
+			const auth = new AuthService(mockSpotifyService, mockJwt);
+
+			expect(() => auth.verifyIdToken(mockIdToken)).toThrowError(
+				new AppError({
+					name: 'TOKEN_IS_EXPIRED',
+					message: 'Authentication token is expired',
+					status: 401,
+				})
+			);
+		});
+
+		it('should throw "INVALID_TOKEN" error if idToken is invalid', () => {
+			const mockIdToken = generateRandomString(48);
+			mockJwt = {
+				...jest.requireActual('jsonwebtoken'),
+				verify: jest.fn(() => {
+					throw {
+						name: 'JsonWebTokenError',
+						message: 'jwt malformed',
+					};
+				}),
+			};
+
+			const auth = new AuthService(mockSpotifyService, mockJwt);
+
+			expect(() => auth.verifyIdToken(mockIdToken)).toThrowError(
+				new AppError({
+					name: 'INVALID_TOKEN',
+					message: 'Authentication token is invalid',
+					status: 401,
+				})
+			);
+		});
+
+		it('should throw another JWT error', () => {
+			const mockIdToken = generateRandomString(48);
+			const mockError = {
+				name: 'JsonWebTokenError',
+				message: 'secret or public key must be provided',
+			};
+			mockJwt = {
+				...jest.requireActual('jsonwebtoken'),
+				verify: jest.fn(() => {
+					throw mockError;
+				}),
+			};
+
+			const auth = new AuthService(mockSpotifyService, mockJwt);
+
+			expect(() => auth.verifyIdToken(mockIdToken)).toThrow(mockError);
 		});
 	});
 

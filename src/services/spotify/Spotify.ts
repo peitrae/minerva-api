@@ -52,9 +52,6 @@ class SpotifyService {
 				});
 			}
 
-      console.log('Err: ', err)
-
-
 			throw err;
 		}
 	}

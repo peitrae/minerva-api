@@ -4,7 +4,8 @@ import config from '@/config';
 import { AppJWTPayload, Credentials } from './Auth.types';
 import { SpotifyService } from '..';
 import { JwtObject } from 'index';
-import { generateRandomString } from '@/utils';
+import { AppJwtPayload } from '@/types/jwt.types';
+import { AppError } from '@/utils';
 
 @Service()
 class AuthService {
@@ -21,7 +22,7 @@ class AuthService {
 			iss: config.baseURL,
 			sub: accessToken,
 			aud: config.clientURL,
-			exp: expiresIn,
+			exp: new Date().getTime() + (expiresIn * 60),
 			iat: new Date().getTime(),
 		});
 
@@ -33,13 +34,30 @@ class AuthService {
 	}
 
 	public verifyIdToken(idToken: string) {
-    /**
-     * @TODO Change to actual method
-     */
+		try {
+			const { accessToken }: AppJwtPayload = this.jwt.verify(
+				idToken,
+				config.jwt.publicKey
+			);
 
-		const accessToken = generateRandomString(20);
+			return { accessToken };
+		} catch (err) {
+			if (err.name === 'TokenExpiredError') {
+				throw new AppError({
+					name: 'TOKEN_IS_EXPIRED',
+					message: 'Authentication token is expired',
+					status: 401,
+				});
+			} else if (err.name === 'JsonWebTokenError' && err.message === 'jwt malformed') {
+				throw new AppError({
+					name: 'INVALID_TOKEN',
+					message: 'Authentication token is invalid',
+					status: 401,
+				});
+			}
 
-		return { accessToken };
+			throw err;
+		}
 	}
 
 	/**
